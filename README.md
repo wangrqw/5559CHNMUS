@@ -53,7 +53,7 @@ We show the parallel coordinates and the t-SNE visualization of the results from
 
 ## Links
 
-Naive Previous Work: https://github.com/wangrqw/NoteEncoder.git
+Note Encoder: https://github.com/wangrqw/NoteEncoder.git
 
 Data preprocessing: https://github.com/wangrqw/MUSDB.git
 
