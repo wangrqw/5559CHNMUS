@@ -11,6 +11,7 @@ Therefore, we would like to do our own feature extraction on traditional Chinese
 Our project is a continuation of the work done by Shen et al. [2] In their work, the music is transformed into spectrograms, where the dimension is 501 by X, X is the number of time steps with 0.025 seconds each. They trained two autoencoders to extract latent vectors from spectrograms: a fully connected autoencoder for single time step feature extraction, and a LSTM autoencoder for a sequence of time steps.
 
 ```{marginfigure}
+<img src="models/model_1/model_1_training.png">
 We know from _the first fundamental theorem of calculus_ that
 for $x$ in $[a, b]$:
 $$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
