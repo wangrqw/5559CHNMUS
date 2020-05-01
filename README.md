@@ -22,9 +22,13 @@ Our project is a continuation of the work done by Shen et al. [2] In the previou
 </figure>
 
 Shen et al. also designed a visualization system MusicLatentVIS with techniques such as t-SNE 2D projection, parallel coordinate, and heatmap. They applied t-SNE to both original data and note latent vectors  and compared them in 2D projection in order to explore whether note latent vectors with the same instrument/artist/pitch tend to form clusters as the note samples.
-Fig 3: t-SNE 2D projection example. Left for original column vector. Right for the encoded version. Color encodes instruments, each individual dense cluster are the notes for a single pitch as labeled (e.g. Mi5, Fa4, etc.).
-
-Parallel coordinate view is used to observe the value distribution in the latent representation. From the plot, the user is able to locate the dimension of the highest value for example, and the dimensions with no value.
+<figure>
+<img src='t-SNE_example' width=500 />
+<figcaption>
+<h6>Fig 3: t-SNE 2D projection example. Left for original column vector. Right for the encoded version. Color encodes instruments, each individual dense cluster are the notes for a single pitch as labeled (e.g. Mi5, Fa4, etc.).</h6>
+</figcaption>
+</figure>
+Parallel coordinate view is used to observe the value distribution in the latent representation. As shown in Fig 4, the user is able to locate the dimension of the highest value for example, and the dimensions with no value.
 
 
 ## Project Goal
