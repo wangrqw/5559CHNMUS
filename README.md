@@ -15,10 +15,8 @@ Our project is a continuation of the work done by Shen et al. [2] In the previou
 <figcaption>
 <h6>Fig 1: Fully Connected Autoencoder for single column of spectrogram[2].</h6>
 </figcaption>
-</figure>  
 
-<figure>
-<img src='figure/LSTM-AE.png' />
+<img src='figure/LSTM-AE.png' width=500 />
 <figcaption>
 <h6>Fig 2: LSTM Autoencoder for sequence of columns of spectrogram. (A) is the architecture of the encoder. (B) is the architecture of decoder. (C) shows each layer in encoder takes a sequence of time steps and process one by one (the next depends on all previous) [2].</h6>
 </figcaption>
