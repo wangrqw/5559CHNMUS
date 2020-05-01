@@ -46,6 +46,9 @@ Therefore we would like to improve the autoencoder model by building another one
 
 
 ## Data Preprocessing
+Our dataset contains 325 music files from 44 artists performing on 4 different instruments, which are Bamboo Flute (39 files), Erhu (70 files), Pipa (57 files), and Zheng (159 files). And the data is in the format of the spectrogram, where each column represents a time step of 0.025s and each row represents the energy on a particular frequency bin (there are 501 rows/bins in our spectrogram). An example spectrogram (not from our data) is shown below in Fig 6.
+
+
 
 ```python
 def load_data(num_samples=100, num_timesteps=30, timestep_length=20):
@@ -74,6 +77,7 @@ def load_data(num_samples=100, num_timesteps=30, timestep_length=20):
 
 ```
 
+$$z = tanh(W_{f,k} * x)$$
 ## Model
 
 
