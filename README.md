@@ -10,7 +10,14 @@ Therefore, we would like to extract features of traditional Chinese music, feed 
 ## Previous Work
 Our project is a continuation of the work done by Shen et al. [2] In the previous work, the music is transformed into spectrograms, whose dimension is 501 by X. X is the number of time steps.  Each time step is 0.025-seconds. Shen et al. trained two autoencoders to extract latent vectors from spectrograms: a fully connected autoencoder for single time step feature extraction (presented as note latent vectors), and a LSTM autoencoder for a sequence of time steps (presented as segment latent vectors).
 
-
+<figure>
+    <img src='figure/FC-AE.png' />
+    <font size="2">
+    <figcaption>
+	    Fig 1: Fully Connected Autoencoder for single column of spectrogram[2] 
+    </figcaption>
+    </font>
+</figure>
 
 ![Fig 1](figure/FC-AE.png)
 *Fig 1: Fully Connected Autoencoder for single column of spectrogram[2]*
