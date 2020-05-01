@@ -1,16 +1,29 @@
 # 5559CHNMUS
 
 ## Overview
-The topic of our project is *Latent Space Visual Exploration for Traditional Chinese Music*, where we extracted features from music using a Wavenet Autoencoder, visualized in our visualization system MusicLatentVIS, and conducted evaluation and analysis to the extracted latent vectors based on the visualization results.
+The topic of our project is Latent Space Visual Exploration for Traditional Chinese Music, where we extracted features from music using a Wavenet Autoencoder, visualized in our visualization system MusicLatentVIS, and conducted evaluation and analysis to the extracted latent vectors based on the visualization results.
 
 I would like to introduce some backgrounds to our project for short. Feature extraction from music is an active research topic in the field of Music Information Retrieval (MIR), and the effectiveness of the extracted representation of music has got better thanks to the advance of deep learning. However, despite some existing efforts on visualizing music features[1], seldom do researchers conduct visual analysis to understand the latent vectors of music. Furthermore, most studies on MIR focus on western music, where traditional Chinese music, as a distinct music system played by a relatively smaller population, is often neglected. 
 
 Therefore, we would like to extract features of traditional Chinese music, feed them into a visualization system, and see if we are able to draw insights from the visualization as music performers.
 
 ## Previous Work
-Our project is a continuation of the work done by Shen et al. [2] In the previous work, the music is transformed into spectrograms, where the dimension is 501 by X, X is the number of time steps with 0.025 seconds each. They trained two autoencoders to extract latent vectors from spectrograms: a fully connected autoencoder for single time step feature extraction, and a LSTM autoencoder for a sequence of time steps.
+Our project is a continuation of the work done by Shen et al. [2] In the previous work, the music is transformed into spectrograms, whose dimension is 501 by X. X is the number of time steps.  Each time step is 0.025-seconds. Shen et al. trained two autoencoders to extract latent vectors from spectrograms: a fully connected autoencoder for single time step feature extraction (presented as note latent vectors), and a LSTM autoencoder for a sequence of time steps (presented as segment latent vectors).
+
+
+
+Fig 1: Fully Connected Autoencoder for                 		         Fig 2: LSTM Autoencoder for sequence of
+single column of spectrogram[2]                                                       columns of spectrogram. (A) and (B) are
+						         architecture of the encoder and decoder 
+						         (C) shows each layer in encoder takes a
+         sequence of time steps and process one by 
+         one (the next depends on all previous) [2].
+
+Shen et al. also designed a visualization system MusicLatentVIS with techniques such as t-SNE 2D projection, parallel coordinate, and heatmap. They applied t-SNE to both original data and note latent vectors  and compared them in 2D projection in order to explore whether note latent vectors with the same instrument/artist/pitch tend to form clusters as the note samples.
+Fig 3: t-SNE 2D projection example. Left for original column vector. Right for the encoded version. Color encodes instruments, each individual dense cluster are the notes for a single pitch as labeled (e.g. Mi5, Fa4, etc.).
 
 Parallel coordinate view is used to observe the value distribution in the latent representation. From the plot, the user is able to locate the dimension of the highest value for example, and the dimensions with no value.
+
 
 ## Project Goal
 There are a couple of aspects that we hope to improve in the previous work. For example, in Fig. 5, each color represents a performer, and each point is a 10 seconds music segment. In spite of some obvious clusters, most points with different colors cluttered the middle part.
