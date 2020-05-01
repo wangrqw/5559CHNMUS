@@ -143,7 +143,15 @@ def train_val_test_split(data, train_test_rate=0.8, train_val_rate=0.9):
     return train_list, val_list, test_list
 ```
 ## Model
+<img src='figure/WaveNetStructure.png'>
+<figcaption>
+<h6>Fig 6: Overview of the Wavenet architecture</h6>
+</figcaption>
 
+<img src='figure/dialation.png'>
+<figcaption>
+<h6>Fig 7: Example of dilated causal convolutional layers</h6>
+</figcaption>
 
 ## Visualization System
 Visualization is helpful for both understanding data and debugging models. Our visualization panel has three basic parts, i.e. the overview panel (home page), the Clip Visualization Panel (ClipVis page), and the Note Visualization Panel (NoteVis page). By clicking the tab on the navigation bar, people can switch between different panels. The selected tab would be highlighted on the navigation bar. The embedding results of different models can be selected through the uploading box on the right corner. 
