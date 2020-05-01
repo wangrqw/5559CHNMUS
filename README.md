@@ -47,7 +47,7 @@ Therefore we would like to improve the autoencoder model by building another one
 
 ## Data Preprocessing
 
-```
+```python
 def load_data(num_samples=100, num_timesteps=30, timestep_length=20):
     sample_list = []
  
