@@ -18,11 +18,11 @@ Our project is a continuation of the work done by Shen et al. [2] In the previou
     </figcaption>
     </font>
 </figure>
-
+---
 ![fig1](figure/FC-AE.png)
 
 .center[Fig 1: Fully Connected Autoencoder for single column of spectrogram[2]]
-
+---
 <figure>
     <img src='figure/LSTM-AE.png' />
     <font size="2">
