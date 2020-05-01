@@ -37,7 +37,7 @@ There are a couple of aspects that we hope to improve in the previous work. For 
 
 <img src='figure/oldLSTMvis.png'>
 <figcaption>
-<h6>Fig 5: Segment Latent Vector Visualization.</h6>
+<h6>Fig 4: Segment Latent Vector Visualization.</h6>
 </figcaption>
 
 While troubled by this kind of observation, we hypothesized that it might be that the encoder is not strong enough to capture the intrinsic property of the music. 
