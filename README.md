@@ -47,6 +47,32 @@ Therefore we would like to improve the autoencoder model by building another one
 
 ## Data Preprocessing
 
+```
+def load_data(num_samples=100, num_timesteps=30, timestep_length=20):
+    sample_list = []
+ 
+    for instrument in os.listdir(data_path):
+        instrument_path = os.path.join(data_path, instrument)
+        for artist in os.listdir(instrument_path):
+            artist_path = os.path.join(instrument_path, artist)
+            for music_file in os.listdir(artist_path):
+                this_music_ndarray = np.load(os.path.join(artist_path, music_file))
+                this_music_ndarray = np.moveaxis(this_music_ndarray, 0, 1)
+                music_length = this_music_ndarray.shape[0]
+                # randomly take num_samples starting points
+                starting_points = np.random.uniform(0, music_length - timestep_length * num_timesteps, num_samples).astype('int')
+                for start_point in starting_points:
+                    sample_list.append({'Instrument': instrument,
+                                        'Artist': artist,
+                                        'Music File Name': music_file,
+                                        'Starting Index:': start_point.item(),
+                                        'Ending Index': (start_point + timestep_length * (num_timesteps - 1)).item(),
+                                        'Interval': timestep_length,
+                                        # take sequence with intervals
+                                        'Spec Array': this_music_ndarray[start_point: start_point + timestep_length *num_timesteps: timestep_length, :]})
+    return sample_list
+
+```
 
 ## Model
 
