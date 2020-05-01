@@ -48,8 +48,14 @@ Therefore we would like to improve the autoencoder model by building another one
 ## Data Preprocessing
 Our dataset contains 325 music files from 44 artists performing on 4 different instruments, which are Bamboo Flute (39 files), Erhu (70 files), Pipa (57 files), and Zheng (159 files). And the data is in the format of the spectrogram, where each column represents a time step of 0.025s and each row represents the energy on a particular frequency bin (there are 501 rows/bins in our spectrogram). An example spectrogram (not from our data) is shown below in Fig 6.
 
+<img src='figure/spectrogram.png'>
+<figcaption>
+<h6>Fig 5: An example of a spectrogram</h6>
+</figcaption>
 
-
+To boost the size of the training set and to accommodate our machine power for the training process, we did the following preprocessing steps:
+* Randomly sample 100 starting points (timestamps) in each spectrogram according to a uniform distribution. This sampling operation gives us 32500 data points in total.
+* From each starting point, take the following 29 time steps with an interval of 20 time steps to form a sequence. From our heuristics, an interval of 20 time steps (20 * 0.025s = 0.5s) will not break the naturality of the music. In this way, each data sample will be a sequence of 30 time steps representing a 14.5s (0.5s*(30-1)= 14.5s) slice from the original music.
 ```python
 def load_data(num_samples=100, num_timesteps=30, timestep_length=20):
     sample_list = []
@@ -74,10 +80,11 @@ def load_data(num_samples=100, num_timesteps=30, timestep_length=20):
                                         # take sequence with intervals
                                         'Spec Array': this_music_ndarray[start_point: start_point + timestep_length *num_timesteps: timestep_length, :]})
     return sample_list
-
 ```
+* For the whole dataset, we converted the amplitude values to decibel because numbers in amplitude are usually small that are not  desired during the training.
+* We further did an min-max normalization to map all decibel numbers in a range of [0, 1].
+* To prevent the decoder from getting information from current time-step and any following time-step, we appended a dummy <start> point at the beginning of the sequence which will be the input to the decoder, and we appended a dummy <end> point at the end of the sequence which will be the output of the decoder. This is a normal practice in a sequence-to-sequence generative model because when the decoder tries to predict the value on the current time step, people do not expect it to get any information from the current time step itself.
 
-$$z = tanh(W_{f,k} * x)$$
 ## Model
 
 
