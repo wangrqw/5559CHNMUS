@@ -12,9 +12,7 @@ Our project is a continuation of the work done by Shen et al. [2] In the previou
 
 ![Fig 1](figure/FC-AE.png)
 <h6>
-<img src="figure/FC-AE.png" width="300">
-<img src="figure/LSTM-AE.png" width=""300>
-Fig 1: Fully Connected Autoencoder for single column of spectrogram[2]
+| <img src="figure/FC-AE.png" width="300"> | Fig 1: Fully Connected Autoencoder for single column of spectrogram[2] |
 </h6>
 
 ```{r fig-margin, fig.margin=TRUE}
