@@ -126,6 +126,22 @@ def get_raw_sequence(json_list):
  
     return input_en, input_de, output_de
 ```
+* We split the dataset into training-validation set and test set in an 80-20 manner, and further split the training-validation set into training and validation sets in a 90-10 manner. This results in 23,400 training samples, 2,600 validation samples, and 6,500 test samples.
+```python
+def train_val_test_split(data, train_test_rate=0.8, train_val_rate=0.9):
+    train_list, test_list = train_test_split(data, train_size=train_test_rate, random_state=42)
+    train_list, val_list = train_test_split(train_list, train_size=train_val_rate, random_state=42)
+ 
+    for item in train_list:
+        item['Dataset'] = 'training'
+ 
+    for item in val_list:
+        item['Dataset'] = 'validation'
+ 
+    for item in test_list:
+        item['Dataset'] = 'test'
+    return train_list, val_list, test_list
+```
 ## Model
 
 
