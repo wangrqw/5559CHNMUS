@@ -23,7 +23,7 @@ Our project is a continuation of the work done by Shen et al. [2] In the previou
 
 Shen et al. also designed a visualization system MusicLatentVIS with techniques such as t-SNE 2D projection, parallel coordinate, and heatmap. They applied t-SNE to both original data and note latent vectors  and compared them in 2D projection in order to explore whether note latent vectors with the same instrument/artist/pitch tend to form clusters as the note samples.
 <figure>
-<img src='figure/t-SNE_example.png' width=500 />
+<img src='figure/t-SNE_example.png'>
 <figcaption>
 <h6>Fig 3: t-SNE 2D projection example. Left for original column vector. Right for the encoded version. Color encodes instruments, each individual dense cluster are the notes for a single pitch as labeled (e.g. Mi5, Fa4, etc.).</h6>
 </figcaption>
