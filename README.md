@@ -19,22 +19,14 @@ Our project is a continuation of the work done by Shen et al. [2] In the previou
     </font>
 </figure>
 
-![Fig 1](figure/FC-AE.png)
-*Fig 1: Fully Connected Autoencoder for single column of spectrogram[2]*
-
-
-```{r fig-margin, fig.margin=TRUE}
-![Fig 1](figure/FC-AE.png)
-<img src="figure/FC-AE.png" width="300">
-<img src="figure/LSTM-AE.png" width=""300>
-```
-
-Fig 1: Fully Connected Autoencoder for                 		         Fig 2: LSTM Autoencoder for sequence of
-single column of spectrogram[2]                                                       columns of spectrogram. (A) and (B) are
-						         architecture of the encoder and decoder 
-						         (C) shows each layer in encoder takes a
-         sequence of time steps and process one by 
-         one (the next depends on all previous) [2].
+<figure>
+    <img src='figure/LSTM-AE.png' />
+    <font size="2">
+    <figcaption>
+	    Fig 2: LSTM Autoencoder for sequence of columns of spectrogram. (A) is the architecture of the encoder. (B) is the architecture of decoder. (C) shows each layer in encoder takes a sequence of time steps and process one by one (the next depends on all previous) [2].
+    </figcaption>
+    </font>
+</figure>
 
 Shen et al. also designed a visualization system MusicLatentVIS with techniques such as t-SNE 2D projection, parallel coordinate, and heatmap. They applied t-SNE to both original data and note latent vectors  and compared them in 2D projection in order to explore whether note latent vectors with the same instrument/artist/pitch tend to form clusters as the note samples.
 Fig 3: t-SNE 2D projection example. Left for original column vector. Right for the encoded version. Color encodes instruments, each individual dense cluster are the notes for a single pitch as labeled (e.g. Mi5, Fa4, etc.).
