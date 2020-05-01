@@ -84,7 +84,48 @@ def load_data(num_samples=100, num_timesteps=30, timestep_length=20):
 * For the whole dataset, we converted the amplitude values to decibel because numbers in amplitude are usually small that are not  desired during the training.
 * We further did an min-max normalization to map all decibel numbers in a range of [0, 1].
 * To prevent the decoder from getting information from current time-step and any following time-step, we appended a dummy <start> point at the beginning of the sequence which will be the input to the decoder, and we appended a dummy <end> point at the end of the sequence which will be the output of the decoder. This is a normal practice in a sequence-to-sequence generative model because when the decoder tries to predict the value on the current time step, people do not expect it to get any information from the current time step itself.
-
+*Furthermore, we also flipped the sequence (both input and output) in the decoder part to accommodate the implementation of convolutional layers in Keras. The input sequence to the encoder part remained unchanged. This is mainly because in Keras when the filter has an even filter size, in our case the filter size is always 2, the connection will be to the current and the next position in the input space, where in our case we want the connection to be to the current and the previous position. Thus, we flipped the sequence. And this will not conflict with any other idea of the original model design.
+```python
+def get_raw_sequence(json_list):
+    input_en = []
+    input_de = []
+    output_de = []
+ 
+    # define start/end dummy vectors
+    dummy_start_vec = np.zeros((1, feature_dim))
+    dummy_end_vec = np.zeros((1, feature_dim))
+    dummy_start_vec[0, 0] = 1.0
+    dummy_end_vec[0, -1] = 1.0
+ 
+    # get min/max value from all decibel numbers
+    min_db = np.inf
+    max_db = - np.inf
+    for item in json_list:
+        this_seq = item['Spec Array']
+        db_seq = amplitude_to_db(this_seq, ref=1.0)
+ 
+        input_en.append(db_seq)
+        min_db = min(min_db, db_seq.min())
+        max_db = max(max_db, db_seq.max())
+ 
+    for index, item in enumerate(input_en):
+        # min-max normalization
+        input_en[index] = (item - min_db) / (max_db - min_db)
+        # flip the sequence for decoder
+        this_input_de = np.flip(input_en[index], 0)
+        # append dummy point
+        input_de.append(np.append(this_input_de, dummy_start_vec, axis=0))
+        output_de.append(np.append(dummy_end_vec, this_input_de, axis=0))
+ 
+    # input of the encoder
+    input_en = np.array(input_en)
+    # input of the decoder
+    input_de = np.array(input_de)
+    # output of the decoder
+    output_de = np.array(output_de)
+ 
+    return input_en, input_de, output_de
+```
 ## Model
 
 
