@@ -12,7 +12,7 @@ Our project is a continuation of the work done by Shen et al. [2] In the previou
 
 <figure>
     <img src='figure/FC-AE.png' />
-    <font size="2">
+    <font size="1">
     <figcaption>
 	    Fig 1: Fully Connected Autoencoder for single column of spectrogram[2] 
     </figcaption>
