@@ -19,7 +19,7 @@ Auther: Rachel Wang, Mengxi Zhou, Tianyu Xiong from VAIS.bmp
 #### References	
 #### Links
 
-<a name='heading-1'>
+<a name='heading-1' />
 ## Overview
 The topic of our project is Latent Space Visual Exploration for Traditional Chinese Music, where we extracted features from music using a Wavenet Autoencoder, visualized in our visualization system MusicLatentVIS, and conducted evaluation and analysis to the extracted latent vectors based on the visualization results.
 
