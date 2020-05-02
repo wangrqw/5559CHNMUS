@@ -3,12 +3,12 @@
 Auther: Rachel Wang, Mengxi Zhou, Tianyu Xiong from VAIS.bmp
 
 ## Table of Contents
-- [Overview](Heading)
-- [Previous Work](Heading)
-- [Project Goal](Heading)
-- [Data Preprocessing](Heading)
-- [Model](Heading)
-- [Visualization System](Heading)
+- [Overview](#heading)
+- [Previous Work](#heading)
+- [Project Goal](#heading)
+- [Data Preprocessing](#heading)
+- [Model](#heading)
+- [Visualization System](#heading)
 #### Overview Panel
 #### Clip Visualization Panel
 #### Note Visualization Panel
