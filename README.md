@@ -146,8 +146,11 @@ def train_val_test_split(data, train_test_rate=0.8, train_val_rate=0.9):
 ```
 ## Model
 For a sequence-to-sequence autoencoder, one popular idea is the fully-dense neural network, where the encoder part has several dense layers to reduce the dimensionality of the sequence, while the decoder part consists of several other dense layers to reconstruct the sequence. The dimension-reduced vector from the output of the encoder can be considered as an embedding of the whole sequence.
+
 Another popular idea is the LSTM-based autoencoder, where the encoder has several LSTM layers and the hidden state of the last unit of the top LSTM layer is considered to be the ‘embedding’ and sent to the decoder. The decoder part is also some LSTM layers that take the ‘embedding’ as the input (or take both the ‘embedding’ and the shifted original sequence together as the input) and reconstruct the input sequence.
-Both models have been explored by our teammate Rachel in her previous works. In this work, we proposed to use a hybrid autoencoder and tried to see if any improvement might be achieved.
+
+Both models have been explored by our teammate Rachel and her collaborators in the previous works. In this work, we proposed to use a hybrid autoencoder and tried to see if any improvement might be achieved.
+
 The hybrid network still follows a standard encoder-decoder structure, where the encoder part consists of several *LSTM layers* (which is identical to the encoder in LSTM-based autoencoders) and the decoder part borrows ideas from the *Wavenet* (a network similar to PixelCNN that we have presented in the class). The hidden state (a vector) of the last LSTM unit in the top LSTM layer of the encoder can be considered as the “embedding” of the input music sequence. And it will be fed into the decoder as an additional input (in addition to the input sequence) that the decoder (Wavenet) can condition on. Assumably, the “embedding” should encode features of the music sequence.
 
 <img src='figure/WaveNetStructure.png'>
@@ -174,8 +177,11 @@ An overview of our autoencoder architecture is shown in Fig 8. The encoder has 3
 In our experiments, the weights for the embedding vector h will be shared within each time step (across all layers) but will remain unshared on different time steps. This may **not** be a good choice since different layers may learn different features from different levels. Sharing the weights across layers may hamper the learning process. But due to the time limit, we did not further experiment with this problem.
 
 Furthermore, the main difference between our task and Wavenet’s original task is that our data is in the format of the spectrogram, meaning all the sequences will be in a format of an (n, m) matrix, where n is the length of the sequence (n_encoder = 30 and n_decoder = 31 in our case) and m is the number of frequency bins in the spectrogram (m = 501 in our case). Overall the architecture follows the Wavenet design but there are two noticeable choices that we can make in the experiment:
-* **Extending Wavenet to multi-channel inputs**: to extend the wavenet to multi-channel (each time step is represented by a vector) data, we tried two ideas, namely **Channel-dependent Filter Conv** and **Channel-integrated Filter Conv**. For an input sequence of (31, 501), we first treated frequency bins as different channels and format the data to (31, 1, 501) to adapt the Keras implementation. For **Channel-dependent Filter Conv**, we learned one individual filter on each individual channel separately. In other words, each input to the conv layer will be separated to 501 * (31, 1, 1) slices and for each (31, 1, 1) slice, one filter (with filter size (2, 1) and an increasing dilation rate as the layer goes deeper) will be learned and still output a (31, 1, 1) tensor. All output slices will be concatenated together to still form a (31, 1, 501) tensor. This can be easily implemented by a function called DepthwiseConv2D in Keras. Another idea is that maybe each channel in a spectrogram should not be learned separately because each note in the music should only be represented by a combination of all frequency bins in the spectrogram. And this type of combination may have some intrinsic rules that should be looked at separately by the filter. For this reason, we tried **Channel-integrated Filter Conv**. The **Channel-integrated Filter Conv** layer takes in a (31, 1, 501) input and learns 501 filters where each filter looks at the input as a whole. And the output of the layer will still be (31, 1, 501). The filter size still remains as (2, 1) with an increasing dilation rate. This is a more common practice in convolutional neural networks and we actually found this produced more meaningful results.
-* **Last output layer design**: for the last output layer, we tried two different settings, namely **Last-conv** and **Last-sparse-dense**. **Last-conv** follows the original Wavenet’s idea where the last output layer is a convolutional layer where the filter size is (1,1). **Last-sparse-dense** is that for each output unit, it connects to all previous time steps in a dense manner. In our implementation this will be connecting to all later units because of the sequence flipping. This type of sparse dense connection is shown in Fig 8 by the dash lines in the top layer.
+* **Extending Wavenet to multi-channel inputs**: to extend the wavenet to multi-channel (each time step is represented by a vector) data, we tried two ideas, namely *Channel-dependent Filter Conv* and *Channel-integrated Filter Conv*. For an input sequence of (31, 501), we first treated frequency bins as different channels and format the data to (31, 1, 501) to adapt the Keras implementation. For *Channel-dependent Filter Conv*, we learned one individual filter on each individual channel separately. In other words, each input to the conv layer will be separated to 501 * (31, 1, 1) slices and for each (31, 1, 1) slice, one filter (with filter size (2, 1) and an increasing dilation rate as the layer goes deeper) will be learned and still output a (31, 1, 1) tensor. All output slices will be concatenated together to still form a (31, 1, 501) tensor. This can be easily implemented by a function called DepthwiseConv2D in Keras. Another idea is that maybe each channel in a spectrogram should not be learned separately because each note in the music should only be represented by a combination of all frequency bins in the spectrogram. And this type of combination may have some intrinsic rules that should be looked at separately by the filter. For this reason, we tried *Channel-integrated Filter Conv*. The *Channel-integrated Filter Conv* layer takes in a (31, 1, 501) input and learns 501 filters where each filter looks at the input as a whole. And the output of the layer will still be (31, 1, 501). The filter size still remains as (2, 1) with an increasing dilation rate. This is a more common practice in convolutional neural networks and we actually found this produced more meaningful results.
+* **Last output layer design**: for the last output layer, we tried two different settings, namely *Last-conv* and *Last-sparse-dense*. *Last-conv* follows the original Wavenet’s idea where the last output layer is a convolutional layer where the filter size is (1,1). *Last-sparse-dense* is that for each output unit, it connects to all previous time steps in a dense manner. In our implementation this will be connecting to all later units because of the sequence flipping. This type of sparse dense connection is shown in Fig 8 by the dash lines in the top layer.
+
+We show the parallel coordinates and the t-SNE visualization of the results from 4 models here in Fig 9 - Fig 12. The four models are according to all possible combinations of the previous design choices. In Parallel coordinates, each embedding vector will be represented as a polyline from the left to the right. And the value on each position of the embedding vector is shown according to the y-axis. In t-SNE visualization, basically the embedding vectors are projected onto the 2d space and each embedding is shown as a point in the 2d space. As we can see from Fig 9-12, all embeddings in `Channel-dependent Filter Conv + Last-conv` have few dimensions that have value and the t-SNE visualization provides no useful information. For `Channel-dependent Filter Conv + Last-sparse-dense` and `Channel-integrated Filter Conv + Last-conv`, more dimensions in the embedding vectors have actual values, while still a half of the dimensions still remain to be zero for all embeddings. Finally, for `Channel-integrated Filter Conv + Last-sparse-dense`, there are only four dimensions which are useless in the embeddings and the t-SNE visualization shows more meaningful results (some clear clusters). These visualizations simply show that *Channel-integrated Filter Conv* and *Last-sparse-dense* are better choices for our task.
+
 
 <img height=230 src='./figure/Channel-dependentFilterConv_Last-conv1.png'> <img height=230 src='./figure/Channel-dependentFilterConv_Last-conv2.png'>
 <figcaption>
@@ -197,13 +203,126 @@ Furthermore, the main difference between our task and Wavenet’s original task 
 <h6>Fig 12: Parallel coordinates and t-SNE visualization of Channel-integrated Filter Conv + Last-sparse-dense</h6>
 </figcaption>
 
-We show the parallel coordinates and the t-SNE visualization of the results from 4 models here in Fig 9 - Fig 12. The four models are according to all possible combinations of the previous design choices. In Parallel coordinates, each embedding vector will be represented as a polyline from the left to the right. And the value on each position of the embedding vector is shown according to the y-axis. In t-SNE visualization, basically the embedding vectors are projected onto the 2d space and each embedding is shown as a point in the 2d space. As we can see from Fig 9-12, all embeddings in `Channel-dependent Filter Conv + Last-conv` have few dimensions that have value and the t-SNE visualization provides no useful information. For `Channel-dependent Filter Conv + Last-sparse-dense` and `Channel-integrated Filter Conv + Last-conv`, more dimensions in the embedding vectors have actual values, while still a half of the dimensions still remain to be zero for all embeddings. Finally, for `Channel-integrated Filter Conv + Last-sparse-dense`, there are only four dimensions which are useless in the embeddings and the t-SNE visualization shows more meaningful results (some clear clusters). These visualizations simply show that Channel-integrated Filter Conv and Last-sparse-dense are better choices for our task.
-
 Due to the time limit, we did not further look into why some dimensions were not getting any information in each model during training. This remains to be in the future work.
 
-We used Mean-squared-error as the loss function and we used Adam optimizer with a learning rate of 0.0005. When inferencing on the test set, only the embedding vector (output of the encoder) would be taken and visualized. In the following sections, the visualization will be only focused on the results of Channel-integrated Filter Conv + Last-sparse-dense model.
+We used Mean-squared-error as the loss function and we used Adam optimizer with a learning rate of 0.0005. When inferencing on the test set, only the embedding vector (output of the encoder) would be taken and visualized. In the following sections, the visualization will be only focused on the results of `Channel-integrated Filter Conv + Last-sparse-dense` model.
 
-Code for the Channel-integrated Filter Conv + Last-sparse-dense model construction:
+Code for the `Channel-integrated Filter Conv + Last-sparse-dense` model construction:
+```python
+# Encoder: the dimensions of the hidden state of LSTM
+# should be a list of numbers, the length of the list indicates how many LSTM layers are used
+hidden_dims = [128, 64, 32]
+ 
+time_steps = 30      # how many time steps are taken for each sample
+feature_dim = 501           # number of dimensions of the spectrogram
+learning_rate = 0.0005
+ 
+def TimeShiftingRearrange(input_tensor, time_steps):
+    # sparse dense connection for the top layer
+    tensor_list = []
+    for i in range(time_steps):
+        this_tensor = Lambda(lambda x: x[:, - (i + 1):, :, :])(input_tensor)
+        this_flt = Flatten()(this_tensor)
+        tensor_list.append(this_flt)
+    return tensor_list
+ 
+ 
+def wavenetBlock(num_filters, filter_size, dilation_rate):
+    def f(input_layer, normal_hidden_rshp, gate_hidden_rshp):
+        residual = input_layer
+        # normal filter
+        normal_conv = Conv2D(num_filters, filter_size, padding='same', dilation_rate=dilation_rate, activation='linear')(input_layer)
+        normal_sum = Add()([normal_conv, normal_hidden_rshp])
+        tanh_out = Lambda(tanh)(normal_sum)
+ 
+        # gate filter
+        gate_conv = Conv2D(num_filters, filter_size, padding='same', dilation_rate=dilation_rate, activation='linear')(input_layer)
+        gate_sum = Add()([gate_conv, gate_hidden_rshp])
+        sig_out = Lambda(sigmoid)(gate_sum)
+ 
+        # gate multiplication
+        merged = Multiply()([tanh_out, sig_out])
+        # skip
+        skip_out = Conv2D(num_filters, (1, 1), padding='same', activation='relu')(merged)
+        # residual
+        out = Add()([skip_out, residual])
+        return out, skip_out
+    return f
+ 
+ 
+def get_decoder(decoder_seq_input, decoder_embd_input, time_steps, feature_dim):
+    input_layer = decoder_seq_input
+ 
+    reshape_layer = Lambda(lambda x: K.expand_dims(x, axis=2), name='reshape_input')(input_layer)
+ 
+    # weights for embedding vector
+    normal_hidden = Dense(time_steps * feature_dim, activation='linear')(decoder_embd_input)
+    gate_hidden = Dense(time_steps * feature_dim, activation='linear')(decoder_embd_input)
+    normal_hidden_rshp = Reshape((time_steps, 1, feature_dim))(normal_hidden)
+    gate_hidden_rshp = Reshape((time_steps, 1, feature_dim))(gate_hidden)
+ 
+    conv_prep = Conv2D(feature_dim, (1, 1), padding='same', activation='relu')(reshape_layer)
+ 
+    # wavenet layers
+    cnn_out1, skip_out1 = wavenetBlock(feature_dim, (2, 1), (1, 1))(conv_prep, normal_hidden_rshp, gate_hidden_rshp)
+    cnn_out2, skip_out2 = wavenetBlock(feature_dim, (2, 1), (2, 1))(cnn_out1, normal_hidden_rshp, gate_hidden_rshp)
+    cnn_out3, skip_out3 = wavenetBlock(feature_dim, (2, 1), (4, 1))(cnn_out2, normal_hidden_rshp, gate_hidden_rshp)
+    cnn_out4, skip_out4 = wavenetBlock(feature_dim, (2, 1), (8, 1))(cnn_out3, normal_hidden_rshp, gate_hidden_rshp)
+ 
+    # skip connection add
+    skip_sum = Add()([skip_out1, skip_out2, skip_out3, skip_out4])
+    skip_actv = Lambda(relu)(skip_sum)
+ 
+    # 1*1 conv layers, this follows the wavenet paper
+    skip_conv1 = Conv2D(feature_dim, (1, 1), padding='same', activation='relu')(skip_actv)
+    skip_conv2 = Conv2D(feature_dim, (1, 1), padding='same', activation='relu')(skip_conv1)
+ 
+    # sparse dense connection
+    shifted_tensor_list = Lambda(TimeShiftingRearrange, arguments={'time_steps': time_steps})(skip_conv2)
+    dense_list = []
+    for i, tensor in enumerate(shifted_tensor_list):
+        this_dense = Dense(501, activation='tanh')(tensor)
+        this_rshp = Lambda(lambda x: K.expand_dims(x, axis=1))(this_dense)
+        dense_list.append(this_rshp)
+    decoder_output = Lambda(lambda x: concatenate(x, axis=1))(dense_list)
+    # decoder_output = Lambda(lambda x: x[:,:,0,:])(skip_conv2)
+    return decoder_output
+ 
+ 
+def get_encoder(encoder_input, hidden_dims):
+    input_layer = encoder_input
+    num_layers = len(hidden_dims)
+    lstm_layers = []
+    for index, hidden_dim in enumerate(hidden_dims):
+        if index == 0:
+            this_lstm_layer = LSTM(hidden_dim, activation='relu', return_sequences=True)(input_layer)
+        elif index == num_layers - 1:
+            # last layer of the LSTM encoder
+            # the output is the final hidden state, which is the embedding weget
+            this_lstm_layer = LSTM(hidden_dim, activation='relu', return_sequences=False, name='embedding_layer')(lstm_layers[index - 1])
+        else:
+            this_lstm_layer = LSTM(hidden_dim, activation='relu', return_sequences=True)(lstm_layers[index - 1])
+        lstm_layers.append(this_lstm_layer)
+ 
+    last_lstm_layer = lstm_layers[num_layers - 1]
+    return last_lstm_layer
+ 
+ 
+def get_autoencoder(time_steps, feature_dim, hidden_dims):
+    # LSTM encoder
+    encoder_input = Input(shape=(time_steps, feature_dim), name='encoder_input')
+    encoder_output = get_encoder(encoder_input, hidden_dims)
+ 
+    # wavenet decoder, input/output sequences are modified with dummy <start>/<end>, thus time_steps+1
+    decoder_seq_input = Input(shape=(time_steps + 1, feature_dim), name='decoder_input')
+    decoder_embd_input = encoder_output
+    decoder_output = get_decoder(decoder_seq_input, decoder_embd_input, time_steps + 1, feature_dim)
+ 
+    model = Model(input=[encoder_input, decoder_seq_input], output=decoder_output)
+    optimizer = Adam(learning_rate=learning_rate)
+    model.compile(loss='mse', optimizer=optimizer, metrics=['cosine_proximity'])
+    return model
+```
 <img src='./figure'>
 <figcaption>
 <h6></h6>
