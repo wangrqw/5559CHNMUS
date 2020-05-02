@@ -9,12 +9,12 @@ Auther: Rachel Wang, Mengxi Zhou, Tianyu Xiong from VAIS.bmp
 - [Data Preprocessing](#heading-4)
 - [Model](#heading-5)
 - [Visualization System](#heading-6)
-    * [Overview Panel]
-    * [Clip Visualization Panel]
-    * [Note Visualization Panel]
+    * [Overview Panel](#sub-heading-1)
+    * [Clip Visualization Panel](#sub-heading-2)
+    * [Note Visualization Panel](#sub-heading-3)
 - [Observation](#heading-7)
-    * [Compare the LSTM Vis and WaveNet Vis]
-    * [Helpful for Exploration]
+    * [Compare the LSTM Vis and WaveNet Vis](#sub-heading-4)
+    * [Helpful for Exploration](#sub-heading-5)
 - [Future Works](#heading-8)
 - [References](#heading-9)
 - [Links](#heading-10)
@@ -27,7 +27,7 @@ I would like to introduce some backgrounds to our project for short. Feature ext
 Therefore, we would like to extract features of traditional Chinese music, feed them into a visualization system, and see if we are able to draw insights from the visualization as music performers.
 
 
-## Previous Work
+## Previous Work <a name="heading-2"></a>
 Our project is a continuation of the work done by Shen et al. [2] In the previous work, the music is transformed into spectrograms, whose dimension is 501 by X. X is the number of time steps.  Each time step is 0.025-seconds. Shen et al. trained two autoencoders to extract latent vectors from spectrograms: a fully connected autoencoder for single time step feature extraction (presented as note latent vectors) shown in Fig 1, and a LSTM autoencoder for a sequence of time steps (presented as segment latent vectors) shown in Fig 2.
 
 <p>
@@ -51,7 +51,7 @@ Shen et al. also designed a visualization system MusicLatentVIS with techniques 
 Parallel coordinate view is used to observe the value distribution in the latent representation. As shown in Fig 4, the user is able to locate the dimension of the highest value for example, and the dimensions with no value.
 
 
-## Project Goal
+## Project Goal <a name="heading-3"></a>
 There are a couple of aspects that we hope to improve in the previous work. For example, in Fig. 5, each color represents a performer, and each point is a 10 seconds music segment. In spite of some obvious clusters, most points with different colors cluttered the middle part.
 
 <img src='figure/oldLSTMvis.png'>
@@ -64,7 +64,7 @@ While troubled by this kind of observation, we hypothesized that it might be tha
 Therefore we would like to improve the autoencoder model by building another one with Wavenet, a CNN architecture with shown superior performance dealing machine learning tasks involving audio [3]. In addition, we wanted to add more alternative 2D project views from different dimensionality reduction algorithms like PCA and UMAP, and finally, we would do an evaluation and analysis based on the visualization results from our Wavenet Autoencoder, and compare it to the previous work.
 
 
-## Data Preprocessing
+## Data Preprocessing <a name="heading-4"></a>
 Our dataset contains 325 music files from 44 artists performing on 4 different instruments, which are Bamboo Flute (39 files), Erhu (70 files), Pipa (57 files), and Zheng (159 files). And the data is in the format of the spectrogram, where each column represents a time step of 0.025s and each row represents the energy on a particular frequency bin (there are 501 rows/bins in our spectrogram). An example spectrogram (not from our data) is shown below in Fig 5.
 
 <img src='figure/spectrogram.png'>
@@ -163,7 +163,7 @@ def train_val_test_split(data, train_test_rate=0.8, train_val_rate=0.9):
         item['Dataset'] = 'test'
     return train_list, val_list, test_list
 ```
-## Model
+## Model <a name="heading-5"></a>
 For a sequence-to-sequence autoencoder, one popular idea is the fully-dense neural network, where the encoder part has several dense layers to reduce the dimensionality of the sequence, while the decoder part consists of several other dense layers to reconstruct the sequence. The dimension-reduced vector from the output of the encoder can be considered as an embedding of the whole sequence.
 
 Another popular idea is the LSTM-based autoencoder, where the encoder has several LSTM layers and the hidden state of the last unit of the top LSTM layer is considered to be the ‘embedding’ and sent to the decoder. The decoder part is also some LSTM layers that take the ‘embedding’ as the input (or take both the ‘embedding’ and the shifted original sequence together as the input) and reconstruct the input sequence.
@@ -199,9 +199,6 @@ Furthermore, the main difference between our task and Wavenet’s original task 
 * **Extending Wavenet to multi-channel inputs**: to extend the wavenet to multi-channel (each time step is represented by a vector) data, we tried two ideas, namely ***Channel-dependent Filter Conv*** and ***Channel-integrated Filter Conv***. For an input sequence of (31, 501), we first treated frequency bins as different channels and format the data to (31, 1, 501) to adapt the Keras implementation. For ***Channel-dependent Filter Conv***, we learned one individual filter on each individual channel separately. In other words, each input to the conv layer will be separated to 501 * (31, 1, 1) slices and for each (31, 1, 1) slice, one filter (with filter size (2, 1) and an increasing dilation rate as the layer goes deeper) will be learned and still output a (31, 1, 1) tensor. All output slices will be concatenated together to still form a (31, 1, 501) tensor. This can be easily implemented by a function called DepthwiseConv2D in Keras. Another idea is that maybe each channel in a spectrogram should not be learned separately because each note in the music should only be represented by a combination of all frequency bins in the spectrogram. And this type of combination may have some intrinsic rules that should be looked at separately by the filter. For this reason, we tried ***Channel-integrated Filter Conv***. The ***Channel-integrated Filter Conv*** layer takes in a (31, 1, 501) input and learns 501 filters where each filter looks at the input as a whole. And the output of the layer will still be (31, 1, 501). The filter size still remains as (2, 1) with an increasing dilation rate. This is a more common practice in convolutional neural networks and we actually found this produced more meaningful results.
 * **Last output layer design**: for the last output layer, we tried two different settings, namely ***Last-conv*** and ***Last-sparse-dense***. ***Last-conv*** follows the original Wavenet’s idea where the last output layer is a convolutional layer where the filter size is (1,1). ***Last-sparse-dense*** is that for each output unit, it connects to all previous time steps in a dense manner. In our implementation this will be connecting to all later units because of the sequence flipping. This type of sparse dense connection is shown in Fig 8 by the dash lines in the top layer.
 
-We show the parallel coordinates and the t-SNE visualization of the results from 4 models here in Fig 9 - Fig 12. The four models are according to all possible combinations of the previous design choices. In Parallel coordinates, each embedding vector will be represented as a polyline from the left to the right. And the value on each position of the embedding vector is shown according to the y-axis. In t-SNE visualization, basically the embedding vectors are projected onto the 2d space and each embedding is shown as a point in the 2d space. As we can see from Fig 9-12, all embeddings in `Channel-dependent Filter Conv + Last-conv` have few dimensions that have value and the t-SNE visualization provides no useful information. For `Channel-dependent Filter Conv + Last-sparse-dense` and `Channel-integrated Filter Conv + Last-conv`, more dimensions in the embedding vectors have actual values, while still a half of the dimensions still remain to be zero for all embeddings. Finally, for `Channel-integrated Filter Conv + Last-sparse-dense`, there are only four dimensions which are useless in the embeddings and the t-SNE visualization shows more meaningful results (some clear clusters). These visualizations simply show that ***Channel-integrated Filter Conv*** and ***Last-sparse-dense*** are better choices for our task.
-
-
 <img height=230 src='./figure/Channel-dependentFilterConv_Last-conv1.png'> <img height=230 src='./figure/Channel-dependentFilterConv_Last-conv2.png'>
 <figcaption>
 <h6>Fig 9: Parallel coordinates and t-SNE visualization of Channel-dependent Filter Conv + Last-conv</h6>
@@ -221,6 +218,8 @@ We show the parallel coordinates and the t-SNE visualization of the results from
 <figcaption>
 <h6>Fig 12: Parallel coordinates and t-SNE visualization of Channel-integrated Filter Conv + Last-sparse-dense</h6>
 </figcaption>
+
+We show the parallel coordinates and the t-SNE visualization of the results from 4 models here in Fig 9 - Fig 12. The four models are according to all possible combinations of the previous design choices. In Parallel coordinates, each embedding vector will be represented as a polyline from the left to the right. And the value on each position of the embedding vector is shown according to the y-axis. In t-SNE visualization, basically the embedding vectors are projected onto the 2d space and each embedding is shown as a point in the 2d space. As we can see from Fig 9-12, all embeddings in `Channel-dependent Filter Conv + Last-conv` have few dimensions that have value and the t-SNE visualization provides no useful information. For `Channel-dependent Filter Conv + Last-sparse-dense` and `Channel-integrated Filter Conv + Last-conv`, more dimensions in the embedding vectors have actual values, while still a half of the dimensions still remain to be zero for all embeddings. Finally, for `Channel-integrated Filter Conv + Last-sparse-dense`, there are only four dimensions which are useless in the embeddings and the t-SNE visualization shows more meaningful results (some clear clusters). These visualizations simply show that ***Channel-integrated Filter Conv*** and ***Last-sparse-dense*** are better choices for our task.
 
 Due to the time limit, we did not further look into why some dimensions were not getting any information in each model during training. This remains to be in the future work.
 
@@ -343,10 +342,10 @@ def get_autoencoder(time_steps, feature_dim, hidden_dims):
     return model
 ```
 
-## Visualization System
+## Visualization System <a name="heading-6"></a>
 Visualization is helpful for both understanding data and debugging models. Our visualization panel has three basic parts, i.e. the overview panel (home page), the Clip Visualization Panel (ClipVis page), and the Note Visualization Panel (NoteVis page). By clicking the tab on the navigation bar, people can switch between different panels. The selected tab would be highlighted on the navigation bar. The embedding results of different models can be selected through the uploading box on the right corner. 
 
-### Overview Panel
+### Overview Panel <a name="sub-heading-1"></a>
 <img src='figure/Vis_overview.png'>
 <figcaption>
 <h6>Fig 13: Overview panel. The lines are colored by instruments. This example shows our current best result provided by Channel-integrated Filter Conv + Last-sparse-dense model.</h6>
@@ -354,7 +353,7 @@ Visualization is helpful for both understanding data and debugging models. Our v
 
 Overview panel is specifically for understanding the data. When data is imported into the visualization system, the overview panel would display a parallel plot to show every dimension of the embedding result. As shown in Fig 13, this view gives people a glance of the embedding, for example, the value range in each dimension, the most outstanding instrument in the dataset, and the most meaningful dimension, etc.
 
-### Clip Visualization Panel
+### Clip Visualization Panel <a name="sub-heading-2"></a>
 We adopted three methods to project our ‘embedding’ into 2D space, i.e. t-SNE, PCA and UMAP. Both t-SNE and UMAP model the similar objects as nearby points, and dissimilar ones as distant points; however, since the two methods work in different schemes, the clusters may look different when projecting to 2D space; for example, our result projected by UMAP usually looks more tight. Hence, making comparison of results of both t-SNE and UMAP is probably helpful to understand the data better. PCA reduces the dimension of ‘embedding’ by decomposing the covariance matrix of the data, so it preserves the distance in the original high dimensional space. 
 
 <img src='figure/Vis_WaveNet.png'>
@@ -364,7 +363,7 @@ We adopted three methods to project our ‘embedding’ into 2D space, i.e. t-SN
 
 The Clip Visualization Panel has three sub panels for displaying the three projections as shown in Fig 14. From the top to the bottom, they are t-SNE view, PCA view, and UMAP view. Each view has five sub displays. The major one is the overview display, which shows all the clips embedding from all four instruments and all the artists. Each of the four small panels stands for one instrument; for instance, the middle two are for BambooFlute and Erhu, and the right two are for Pipa and Zheng. 
 
-### Note Visualization Panel
+### Note Visualization Panel <a name="sub-heading-3"></a>
 The Note Visualization Panel incorporates 2D projection from t-SNE and PCA as well as a parallel coordinate sub panel. The note latent vector for this panel comes from the fully connected autoencoder from Shen et al. We recreated the interface and developed a fisheye magnifier effect for the t-SNE projection.
 
 Parallel coordinate view is used to observe the value distribution in the latent representation. From the plot, the user is able to locate the dimension of the highest value for example, and the dimensions with no value.
@@ -383,8 +382,8 @@ Overall, the panel is composed of t-SNE view, PCA view, and parallel coordinates
 
 In the t-SNE sub panel, before the magnifier is applied, it is hard to check the distances between each note latent vectors in the same cluster of pitch and instrument (e.g. Mi4 in red), but with the magnifier we have a better view of the intra-cluster distances as shown in Fig 16. Note that fish eye magnifier distorts plots a lot, so we only applied the fish eye to t-SNE projection which does not preserve the distance in the original dimension.
 
-## Observation
-### Compare the LSTM Vis and WaveNet Vis
+## Observation <a name="heading-7"></a>
+### Compare the LSTM Vis and WaveNet Vis <a name="sub-heading-4"></a>
 
 <img width=450 src='./figure/Vis_LSTM.png'> <img width=450 src='./figure/Vis_WaveNet.png'>
 <figcaption>
@@ -393,7 +392,7 @@ In the t-SNE sub panel, before the magnifier is applied, it is hard to check the
 
 From Fig 17 above, we can clearly see that the LSTM Autoencoder has better clustering results on both t-SNE and UMAP view. One thing to be clarified here is why the result in the previous work does not look good. The reason is that in the previous work, the points are encoded in over 40 different colors, each color representing one artist, but 40 colors are not distinctive in human eyes. This time, we upgraded the visual encoding: we marked music segments played by different instruments with unique symbols and then assigned colors to artists who play the same instruments. To be more clear, we also made four subplots for the four instruments. In this way, we can see the segment played by the same artist more easily. 
 
-### Helpful for Exploration
+### Helpful for Exploration <a name="sub-heading-5"></a>
 
 <img src='./figure/Vis_Art.jpg'>
 <figcaption>
@@ -403,18 +402,20 @@ From Fig 17 above, we can clearly see that the LSTM Autoencoder has better clust
 While we adjusted the model, the visualization really helped us analyze the buggy result. In Fig 18, the result is produced by Channel-integrated Filter Conv + Last-conv. We did not find anything through the t-SNE and UMAP views as usual, but we observed special patterns for Bamboo Flute and Erhu on the PCA view. Both of the two instruments produce continuous notes in performance but the other two cannot. So this model is probably strong on extracting instrument features. 
 
 
-## Future Works
+## Future Works <a name="heading-8"></a>
 Several points are remained to be in the future work from this project:
 * Look into why some dimensions were not getting any information in each model during training.
 * In the wavenet decoder, try not to share the weights for the hidden vector across different layers.
 * Although we experimented with different model settings to find a better choice, the hyperparameters of the model remained unexplored in this project. An exploration into the hyperparameter space may lead to a better performance.
 
-## References
+## References <a name="heading-9"></a>
 [1] Swaroop Panda, Vinay P. Namboodiri, and Shatarupa Thakurta Roy.
+
 [2] J. Shen, R. Wang, and H.-W. Shen, “Visual exploration of latent space for traditional Chinese music,” Visual Informatics, 2020.
+
 [3] A. Oord, S. Dieleman, H. Zen, K. Simonyan, O. Vinyals, A. Graves, N. Kalchbrenner, A. Senior, and K. Kavukcuoglu, 2020. *Wavenet: A Generative Model For Raw Audio*. [online] arXiv.org.
 
-## Links
+## Links <a name="heading-10"></a>
 
 Note Encoder: https://github.com/wangrqw/NoteEncoder.git
 
