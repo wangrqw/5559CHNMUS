@@ -178,14 +178,24 @@ Furthermore, the main difference between our task and Wavenet’s original task 
 * **Last output layer design**: for the last output layer, we tried two different settings, namely **Last-conv** and **Last-sparse-dense**. **Last-conv** follows the original Wavenet’s idea where the last output layer is a convolutional layer where the filter size is (1,1). **Last-sparse-dense** is that for each output unit, it connects to all previous time steps in a dense manner. In our implementation this will be connecting to all later units because of the sequence flipping. This type of sparse dense connection is shown in Fig 8 by the dash lines in the top layer.
 We show the parallel coordinates and the t-SNE visualization of the results from 4 models here in Fig 9 - Fig 12. The four models are according to all possible combinations of the previous design choices. In Parallel coordinates, each embedding vector will be represented as a polyline from the left to the right. And the value on each position of the embedding vector is shown according to the y-axis. In t-SNE visualization, basically the embedding vectors are projected onto the 2d space and each embedding is shown as a point in the 2d space. As we can see from Fig 9-12, all embeddings in `Channel-dependent Filter Conv + Last-conv` have few dimensions that have value and the t-SNE visualization provides no useful information. For `Channel-dependent Filter Conv + Last-sparse-dense` and `Channel-integrated Filter Conv + Last-conv`, more dimensions in the embedding vectors have actual values, while still a half of the dimensions still remain to be zero for all embeddings. Finally, for `Channel-integrated Filter Conv + Last-sparse-dense`, there are only four dimensions which are useless in the embeddings and the t-SNE visualization shows more meaningful results (some clear clusters). These visualizations simply show that Channel-integrated Filter Conv and Last-sparse-dense are better choices for our task.
 
-<img height=225 src='./figure/Channel-dependentFilterConv_Last-conv1.png'> <img height=225 src='./figure/Channel-dependentFilterConv_Last-conv2.png'>
+<img height=230 src='./figure/Channel-dependentFilterConv_Last-conv1.png'> <img height=230 src='./figure/Channel-dependentFilterConv_Last-conv2.png'>
 <figcaption>
 <h6>Fig 9: Parallel coordinates and t-SNE visualization of Channel-dependent Filter Conv + Last-conv</h6>
 </figcaption>
 
-<img src='./figure'>
+<img height=230 src='./figure/Channel-dependentFilterConv_Last-sparse-dense.png'> <img height=230 src='./figure/Channel-dependentFilterConv_Last-sparse-dense2.png'>
 <figcaption>
-<h6></h6>
+<h6>Fig 10: Parallel coordinates and t-SNE visualization of Channel-dependent Filter Conv + Last-sparse-dense</h6>
+</figcaption>
+
+<img height=230 src='./figure/Channel-integratedFilterConv_Last-conv.png'> <img height=230 src='./figure/Channel-integratedFilterConv_Last-conv2.png'>
+<figcaption>
+<h6>Fig 11: Parallel coordinates and t-SNE visualization of Channel-integrated Filter Conv + Last-conv</h6>
+</figcaption>
+
+<img height=230 src='./figure/overview.png'> <img height=230 src='./figure/bestTSNE.png'>
+<figcaption>
+<h6>Fig 12: Parallel coordinates and t-SNE visualization of Channel-integrated Filter Conv + Last-sparse-dense</h6>
 </figcaption>
 
 <img src='./figure'>
