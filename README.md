@@ -323,15 +323,6 @@ def get_autoencoder(time_steps, feature_dim, hidden_dims):
     model.compile(loss='mse', optimizer=optimizer, metrics=['cosine_proximity'])
     return model
 ```
-<img src='./figure'>
-<figcaption>
-<h6></h6>
-</figcaption>
-
-<img src='./figure'>
-<figcaption>
-<h6></h6>
-</figcaption>
 
 ## Visualization System
 Visualization is helpful for both understanding data and debugging models. Our visualization panel has three basic parts, i.e. the overview panel (home page), the Clip Visualization Panel (ClipVis page), and the Note Visualization Panel (NoteVis page). By clicking the tab on the navigation bar, people can switch between different panels. The selected tab would be highlighted on the navigation bar. The embedding results of different models can be selected through the uploading box on the right corner. 
@@ -339,25 +330,62 @@ Visualization is helpful for both understanding data and debugging models. Our v
 ### Overview Panel
 <img src='figure/Vis_overview.png'>
 <figcaption>
-<h6>Fig 13: Overview panel. The lines are colored by instruments. This example shows our current bets result.</h6>
+<h6>Fig 13: Overview panel. The lines are colored by instruments. This example shows our current best result provided by Channel-integrated Filter Conv + Last-sparse-dense model.</h6>
 </figcaption>
-Overview panel is specifically for understanding the data. When data is imported into the visualization system, the overview panel would display a parallel plot to show every dimension of the embedding result. As shown in Fig 14, this view gives people a glance of the embedding, for example, the value range in each dimension, the most outstanding instrument in the dataset, and the most meaningful dimension, etc.
+
+Overview panel is specifically for understanding the data. When data is imported into the visualization system, the overview panel would display a parallel plot to show every dimension of the embedding result. As shown in Fig 13, this view gives people a glance of the embedding, for example, the value range in each dimension, the most outstanding instrument in the dataset, and the most meaningful dimension, etc.
 
 ### Clip Visualization Panel
 We adopted three methods to project our ‘embedding’ into 2D space, i.e. t-SNE, PCA and UMAP. Both t-SNE and UMAP model the similar objects as nearby points, and dissimilar ones as distant points; however, since the two methods work in different schemes, the clusters may look different when projecting to 2D space; for example, our result projected by UMAP usually looks more tight. Hence, making comparison of results of both t-SNE and UMAP is probably helpful to understand the data better. PCA reduces the dimension of ‘embedding’ by decomposing the covariance matrix of the data, so it preserves the distance in the original high dimensional space. 
 
-<img src='figure/Vis_Art.png'>
+<img src='figure/Vis_WaveNet.png'>
 <figcaption>
-<h6>Fig 14: Clip Visualization Panel. This is a visualization of one of our embedding results. From the top to the bottom, there are t-SNE view, PCA view and UMAP view.</h6>
+<h6>Fig 14: Clip Visualization Panel. From the top to the bottom, there are t-SNE view, PCA view and UMAP view.  This example shows our current best result provided by Channel-integrated Filter Conv + Last-sparse-dense model.</h6>
 </figcaption>
 
-The Clip Visualization Panel has three sub panels for displaying the three projections as shown in Fig 15. From the top to the bottom, they are t-SNE view, PCA view, and UMAP view. Each view has five sub displays. The major one is the overview display, which shows all the clips embedding from all four instruments and all the artists. Each of the four small panels stands for one instrument; for instance, the middle two are for BambooFlute and Erhu, and the right two are for Pipa and Zheng. 
+The Clip Visualization Panel has three sub panels for displaying the three projections as shown in Fig 14. From the top to the bottom, they are t-SNE view, PCA view, and UMAP view. Each view has five sub displays. The major one is the overview display, which shows all the clips embedding from all four instruments and all the artists. Each of the four small panels stands for one instrument; for instance, the middle two are for BambooFlute and Erhu, and the right two are for Pipa and Zheng. 
 
 ### Note Visualization Panel
-The Note Visualization Panel incorporated 2D projection from t-SNE and PCA as well as a parallel coordinate sub panel. The note latent vector for this panel comes from the fully connected autoencoder from Shen et al. We reworked the interface and developed a fisheye magnifier effect for the t-SNE projection.
+The Note Visualization Panel incorporates 2D projection from t-SNE and PCA as well as a parallel coordinate sub panel. The note latent vector for this panel comes from the fully connected autoencoder from Shen et al. We recreated the interface and developed a fisheye magnifier effect for the t-SNE projection.
 
-Overall, the panel is formatted in the order of t-SNE projection, PCA projection, and then the parallel coordinates.
+Parallel coordinate view is used to observe the value distribution in the latent representation. From the plot, the user is able to locate the dimension of the highest value for example, and the dimensions with no value.
 
+<img src='./figure/Vis_NoteVis.png'>
+<figcaption>
+<h6>Fig 15: Note Visualization Panel</h6>
+</figcaption>
+
+Overall, the panel is composed of t-SNE view, PCA view, and parallel coordinates view from the top to the bottom as shown in Fig 15.
+
+<img src='./figure/fisheye.png'>
+<figcaption>
+<h6>Fig. 16: Fisheye magnifier effect for t-SNE projection. Left: original. Right: magnified.</h6>
+</figcaption>
+
+In the t-SNE sub panel, before the magnifier is applied, it is hard to check the distances between each note latent vectors in the same cluster of pitch and instrument (e.g. Mi4 in red), but with the magnifier we have a better view of the intra-cluster distances as shown in Fig 16. Note that fish eye magnifier distorts plots a lot, so we only applied the fish eye to t-SNE projection which does not preserve the distance in the original dimension.
+
+## Observation
+### Compare the LSTM Vis and WaveNet Vis
+
+<img width=450 src='./figure/Vis_LSTM.png'> <img width=450 src='./figure/Vis_WaveNet.png'>
+<figcaption>
+<h6>Fig 17: Left: the result of LSTM Autoencoder. Right: the result of WaveNet Autoencoder. </h6>
+</figcaption>
+
+<img src='./figure/'>
+<figcaption>
+<h6></h6>
+</figcaption>
+
+<img src='./figure/'>
+<figcaption>
+<h6></h6>
+</figcaption>
+
+<img src='./figure/'>
+<figcaption>
+<h6></h6>
+</figcaption>
 Fig X: Note Visualization Panel (2/3)
 
 Fig. X: Note Visualization Panel (3/3)
