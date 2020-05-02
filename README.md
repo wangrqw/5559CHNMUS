@@ -372,41 +372,28 @@ In the t-SNE sub panel, before the magnifier is applied, it is hard to check the
 <h6>Fig 17: Left: the result of LSTM Autoencoder. Right: the result of WaveNet Autoencoder. </h6>
 </figcaption>
 
-<img src='./figure/'>
+From Fig 17 above, we can clearly see that the LSTM Autoencoder has better clustering results on both t-SNE and UMAP view. One thing to be clarified here is why the result in the previous work does not look good. The reason is that in the previous work, the points are encoded in over 40 different colors, each color representing one artist, but 40 colors are not distinctive in human eyes. This time, we upgraded the visual encoding: we marked music segments played by different instruments with unique symbols and then assigned colors to artists who play the same instruments. To be more clear, we also made four subplots for the four instruments. In this way, we can see the segment played by the same artist more easily. 
+
+### Helpful for Exploration
+
+<img src='./figure/Vis_Art'>
 <figcaption>
-<h6></h6>
+<h6>Fig 18: One interesting buggy result, produced by Channel-integrated Filter Conv + Last-conv</h6>
 </figcaption>
 
-<img src='./figure/'>
-<figcaption>
-<h6></h6>
-</figcaption>
-
-<img src='./figure/'>
-<figcaption>
-<h6></h6>
-</figcaption>
-Fig X: Note Visualization Panel (2/3)
-
-Fig. X: Note Visualization Panel (3/3)
-
-In the t-SNE sub panel, before the magnifier is applied, it’s hard to check the distances between each note latent vectors in the same cluster of pitch and instrument (e.g. Mi4 in red), but with the magnifier we have a better view of the intra-cluster distances.
-
-Fig. X: Fisheye magnifier effect for t-SNE projection. Left: original. Right: Magnified.
-
-
-## Observation: Compare the LSTM Vis and WaveNet Vis
-Left: the result of LSTM Autoencoder. Right: the result of WaveNet Autoencoder. 
-
-From fig x above, we can clearly see that the LSTM Autoencoder has better clustering results on both t-SNE and UMAP view. One thing to be clarified here is why the result in the previous work does not look good. The reason is that in the previous work, the points are colored by the artists whose number is above 40, but 40 colors are distinctive in human eyes. This time, we upgraded the visual encoding: we marked music segments played by different instruments by unique symbols and then assigned colors to artists who play the same instruments. To be more clear, we also make four subplots for the four instruments. In this way, we can see the segment played by the same artist more easily. 
+While we adjusted the model, the visualization really helped us analyze the buggy result. In Fig 18, the result shown on the left is produced by Channel-integrated Filter Conv + Last-conv. We did not find anything through the t-SNE and UMAP views as usual, but we observed special patterns for Bamboo Flute and Erhu on the PCA view. Both of the two instruments produce continuous notes in performance but the other two cannot. So this model is probably strong on extracting instrument features. 
 
 
 ## Future Works
 Several points are remained to be in the future work from this project:
-Look into why some dimensions were not getting any information in each model during training.
-In the wavenet decoder, try not to share the weights for the hidden vector across different layers.
-Although we experimented with different model settings to find a better choice, the hyperparameters of the model remained unexplored in this project. An exploration into the hyperparameter space may lead to a better performance.
+* Look into why some dimensions were not getting any information in each model during training.
+* In the wavenet decoder, try not to share the weights for the hidden vector across different layers.
+* Although we experimented with different model settings to find a better choice, the hyperparameters of the model remained unexplored in this project. An exploration into the hyperparameter space may lead to a better performance.
 
+## References
+[1] Swaroop Panda, Vinay P. Namboodiri, and Shatarupa Thakurta Roy.
+[2] J. Shen, R. Wang, and H.-W. Shen, “Visual exploration of latent space for traditional Chinese music,” Visual Informatics, 2020.
+[3] A. Oord, S. Dieleman, H. Zen, K. Simonyan, O. Vinyals, A. Graves, N. Kalchbrenner, A. Senior, and K. Kavukcuoglu, 2020. *Wavenet: A Generative Model For Raw Audio*. [online] arXiv.org.
 
 ## Links
 
