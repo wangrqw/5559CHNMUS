@@ -376,12 +376,12 @@ From Fig 17 above, we can clearly see that the LSTM Autoencoder has better clust
 
 ### Helpful for Exploration
 
-<img src='./figure/Vis_Art'>
+<img src='./figure/Vis_Art.jpg'>
 <figcaption>
 <h6>Fig 18: One interesting buggy result, produced by Channel-integrated Filter Conv + Last-conv</h6>
 </figcaption>
 
-While we adjusted the model, the visualization really helped us analyze the buggy result. In Fig 18, the result shown on the left is produced by Channel-integrated Filter Conv + Last-conv. We did not find anything through the t-SNE and UMAP views as usual, but we observed special patterns for Bamboo Flute and Erhu on the PCA view. Both of the two instruments produce continuous notes in performance but the other two cannot. So this model is probably strong on extracting instrument features. 
+While we adjusted the model, the visualization really helped us analyze the buggy result. In Fig 18, the result is produced by Channel-integrated Filter Conv + Last-conv. We did not find anything through the t-SNE and UMAP views as usual, but we observed special patterns for Bamboo Flute and Erhu on the PCA view. Both of the two instruments produce continuous notes in performance but the other two cannot. So this model is probably strong on extracting instrument features. 
 
 
 ## Future Works
