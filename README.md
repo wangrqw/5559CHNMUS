@@ -12,9 +12,11 @@ Auther: Rachel Wang, Mengxi Zhou, Tianyu Xiong from VAIS.bmp
     * [Overview Panel]
     * [Clip Visualization Panel]
     * [Note Visualization Panel]
+    
 - [Observation]
     * [Compare the LSTM Vis and WaveNet Vis]
     * [Helpful for Exploration]
+
 - [Future Works]
 - [References]	
 - [Links]
