@@ -3,9 +3,9 @@
 Auther: Rachel Wang, Mengxi Zhou, Tianyu Xiong from VAIS.bmp
 
 ## Table of Contents
-- [Overview](#heading)
-- [Previous Work](#heading)
-- [Project Goal](#heading)
+- [Overview](#heading-1)
+- [Previous Work](#heading-2)
+- [Project Goal](#heading-3)
 - [Data Preprocessing](#heading)
 - [Model](#heading)
 - [Visualization System](#heading)
