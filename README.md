@@ -6,20 +6,19 @@ Auther: Rachel Wang, Mengxi Zhou, Tianyu Xiong from VAIS.bmp
 - [Overview](#heading-1)
 - [Previous Work](#heading-2)
 - [Project Goal](#heading-3)
-- [Data Preprocessing](#heading)
-- [Model](#heading)
-- [Visualization System](#heading)
-#### Overview Panel
-#### Clip Visualization Panel
-#### Note Visualization Panel
-### Observation
-#### Compare the LSTM Vis and WaveNet Vis
-#### Helpful for Exploration
-#### Future Works
-#### References	
-#### Links
+- [Data Preprocessing](#heading-4)
+- [Model](#heading-5)
+- [Visualization System](#heading-6)
+* [Overview Panel]
+* [Clip Visualization Panel]
+* [Note Visualization Panel]
+- [Observation]
+* [Compare the LSTM Vis and WaveNet Vis]
+* [Helpful for Exploration]
+- [Future Works]
+- [References]	
+- [Links]
 
-<a name='heading-1' />
 ## Overview
 The topic of our project is Latent Space Visual Exploration for Traditional Chinese Music, where we extracted features from music using a Wavenet Autoencoder, visualized in our visualization system MusicLatentVIS, and conducted evaluation and analysis to the extracted latent vectors based on the visualization results.
 
